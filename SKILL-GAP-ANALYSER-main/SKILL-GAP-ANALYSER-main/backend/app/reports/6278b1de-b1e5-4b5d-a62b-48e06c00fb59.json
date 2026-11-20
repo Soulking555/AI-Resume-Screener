@@ -1,0 +1,180 @@
+{
+  "report_id": "6278b1de-b1e5-4b5d-a62b-48e06c00fb59",
+  "timestamp": "2026-11-21T00:08:33.689418",
+  "model_used": "Proposed Hybrid",
+  "candidate_skills": [
+    "RESTful API Design",
+    "CI/CD",
+    "Machine Learning",
+    "Python",
+    "JavaScript",
+    "Bash/Shell",
+    "Node.js",
+    "FastAPI",
+    "Django",
+    "Docker",
+    "AWS",
+    "Linux Administration",
+    "PostgreSQL",
+    "Redis",
+    "SQL",
+    "Git Version Control",
+    "Microservices Architecture"
+  ],
+  "jd_explicit_skills": [
+    "Machine Learning",
+    "Deep Learning",
+    "Git Version Control",
+    "Python",
+    "Kubernetes",
+    "Docker",
+    "AWS",
+    "Terraform",
+    "Linux Administration",
+    "PostgreSQL",
+    "PyTorch",
+    "Natural Language Processing",
+    "MLflow"
+  ],
+  "matched_skills": [
+    "Machine Learning",
+    "Git Version Control",
+    "Python",
+    "Docker",
+    "AWS",
+    "Linux Administration",
+    "PostgreSQL"
+  ],
+  "explicit_gaps": [
+    "Deep Learning",
+    "Kubernetes",
+    "Terraform",
+    "PyTorch",
+    "Natural Language Processing",
+    "MLflow"
+  ],
+  "implicit_gaps": [
+    "Algorithmic Thinking",
+    "Automated Testing",
+    "Cloud Computing Concepts",
+    "Container Networking",
+    "Database Indexing",
+    "DevOps Principles",
+    "GPU Computing",
+    "Infrastructure as Code",
+    "Linear Algebra",
+    "Linguistics Basics",
+    "Networking Fundamentals",
+    "Object-Oriented Programming",
+    "Operating System Basics",
+    "Probability & Statistics",
+    "Relational Database Design",
+    "Software Engineering Best Practices",
+    "Vector Calculus"
+  ],
+  "skill_coverage_pct": 28.1,
+  "overall_similarity_score": 0.7751,
+  "roadmap": [
+    {
+      "phase": 1,
+      "skill": "Algorithmic Thinking",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in algorithmic thinking.",
+      "triggered_by": [
+        "Machine Learning",
+        "Python",
+        "PyTorch"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Automated Testing",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in automated testing.",
+      "triggered_by": [
+        "Kubernetes"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Cloud Computing Concepts",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in cloud computing concepts.",
+      "triggered_by": [
+        "AWS",
+        "Terraform"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Container Networking",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in container networking.",
+      "triggered_by": [
+        "Kubernetes"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Database Indexing",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in database indexing.",
+      "triggered_by": [
+        "PostgreSQL"
+      ]
+    },
+    {
+      "phase": 2,
+      "skill": "Deep Learning",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Subfield of machine learning utilizing multi-layered artificial neural networks for high-dimensional feature extraction.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "Kubernetes",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Open-source system for automating deployment, scaling, and operational management of containerized applications.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "Terraform",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Infrastructure as Code tool for building, changing, and versioning cloud and on-premises infrastructure safely.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "PyTorch",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Open-source machine learning library based on Torch for tensor computation and deep neural networks with dynamic autograd.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "Natural Language Processing",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Computational techniques enabling algorithms to parse, understand, interpret, and generate human languages.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "MLflow",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Open-source platform managing end-to-end machine learning lifecycle including tracking, model packaging, and registry.",
+      "triggered_by": null
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "report_id": "ddf4bd0f-b728-432e-8299-e98abeab8689",
+  "timestamp": "2026-11-21T00:08:09.249742",
+  "model_used": "Proposed Hybrid",
+  "candidate_skills": [
+    "Software Engineering Best Practices",
+    "Relational Database Design",
+    "Operating System Basics",
+    "Cloud Computing Concepts",
+    "HTTP Protocol Basics",
+    "Linux Administration",
+    "RESTful API Design",
+    "Algorithmic Thinking",
+    "Asynchronous Programming",
+    "Networking Fundamentals",
+    "Data Modeling",
+    "Python",
+    "JavaScript",
+    "React",
+    "Node.js",
+    "HTML5/CSS3",
+    "AWS",
+    "MongoDB",
+    "SQL",
+    "Git Version Control"
+  ],
+  "jd_explicit_skills": [
+    "RESTful API Design",
+    "Python",
+    "JavaScript",
+    "React",
+    "Node.js",
+    "HTML5/CSS3",
+    "AWS",
+    "MongoDB",
+    "SQL",
+    "Git Version Control"
+  ],
+  "matched_skills": [
+    "RESTful API Design",
+    "Python",
+    "JavaScript",
+    "React",
+    "Node.js",
+    "HTML5/CSS3",
+    "AWS",
+    "MongoDB",
+    "SQL",
+    "Git Version Control"
+  ],
+  "explicit_gaps": [],
+  "implicit_gaps": [
+    "NoSQL Concepts",
+    "Object-Oriented Programming",
+    "State Management",
+    "Web Development Basics"
+  ],
+  "skill_coverage_pct": 83.3,
+  "overall_similarity_score": 1.0,
+  "roadmap": [
+    {
+      "phase": 1,
+      "skill": "NoSQL Concepts",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in nosql concepts.",
+      "triggered_by": [
+        "MongoDB"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Object-Oriented Programming",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in object-oriented programming.",
+      "triggered_by": [
+        "Python"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "State Management",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Architectural patterns and libraries for synchronizing application state across complex frontend component trees.",
+      "triggered_by": [
+        "React"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Web Development Basics",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in web development basics.",
+      "triggered_by": [
+        "RESTful API Design",
+        "JavaScript",
+        "React"
+      ]
+    }
+  ]
+}

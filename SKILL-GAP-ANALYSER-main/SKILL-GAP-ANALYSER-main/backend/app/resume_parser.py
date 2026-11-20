@@ -131,6 +131,11 @@ class SkillExtractor:
         mentions: List[ExtractedSkillMention] = []
         found_canonical: set = set()
         text_clean = re.sub(r'\s+', ' ', text.lower().strip())
+        # Normalize sentence punctuation before alias matching.  This allows
+        # aliases in real resumes ("Python,", "Kubernetes.", "AWS;") to
+        # match the same way as whitespace-delimited aliases.
+        text_clean = re.sub(r'[^\w\+#\.]+', ' ', text_clean)
+        text_clean = re.sub(r'\s+', ' ', text_clean).strip()
         tokens = text_clean.split()
         n_tokens = len(tokens)
 

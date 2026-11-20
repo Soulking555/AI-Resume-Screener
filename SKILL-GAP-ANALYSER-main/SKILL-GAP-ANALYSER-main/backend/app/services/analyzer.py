@@ -119,42 +119,92 @@ async def analyze_resume(
     jd_implicit_all = esco_engine.get_implicit_prerequisites(jd_explicit)
     jd_implicit = [s for s in jd_implicit_all if s not in jd_explicit]
 
-    # 5. Match explicit skills
-    if model_name == "Proposed Hybrid":
-        matched_explicit, explicit_gap_names, sim_mat = model.match_skills(
-            cand_skills, jd_explicit, threshold=threshold, candidate_contexts=cand_contexts
-        )
-    else:
-        matched_explicit, explicit_gap_names, sim_mat = model.match_skills(
-            cand_skills, jd_explicit, threshold=threshold
-        )
+    # 5. Compute one normalized-vector cosine matrix for the selected model.
+    # Matching, gap classification, per-skill scores, and coverage all use
+    # these real cosine values; no exact-name or lexical score is substituted.
+    def encode_cosine_matrix(candidate_names, target_names):
+        if not candidate_names or not target_names:
+            return np.zeros((len(candidate_names), len(target_names)))
+        try:
+            candidate_embeddings = np.asarray(model.encode(candidate_names), dtype=np.float32)
+            target_embeddings = np.asarray(model.encode(target_names), dtype=np.float32)
+            candidate_norms = np.linalg.norm(candidate_embeddings, axis=1, keepdims=True)
+            target_norms = np.linalg.norm(target_embeddings, axis=1, keepdims=True)
+            candidate_embeddings = candidate_embeddings / np.clip(candidate_norms, 1e-9, None)
+            target_embeddings = target_embeddings / np.clip(target_norms, 1e-9, None)
+            return np.clip(candidate_embeddings @ target_embeddings.T, -1.0, 1.0)
+        except Exception:
+            return np.zeros((len(candidate_names), len(target_names)))
 
-    # 6. Match implicit skills
-    if jd_implicit:
-        if model_name == "Proposed Hybrid":
-            matched_implicit, implicit_gap_names, _ = model.match_skills(
-                cand_skills, jd_implicit, threshold=threshold, candidate_contexts=cand_contexts
-            )
-        else:
-            matched_implicit, implicit_gap_names, _ = model.match_skills(
-                cand_skills, jd_implicit, threshold=threshold
-            )
-    else:
-        matched_implicit, implicit_gap_names = [], []
+    explicit_cosine_mat = encode_cosine_matrix(cand_skills, jd_explicit)
+    implicit_cosine_mat = encode_cosine_matrix(cand_skills, jd_implicit) if jd_implicit else np.zeros((len(cand_skills), 0))
 
-    # 7. Build similarity scores (top pairs)
+    def match_by_cosine(target_names, cosine_matrix):
+        matched = []
+        gaps = []
+        if cosine_matrix.size == 0:
+            return matched, list(target_names)
+        for j, target_name in enumerate(target_names):
+            if j < cosine_matrix.shape[1]:
+                best_score = float(np.max(cosine_matrix[:, j]))
+                if best_score >= threshold:
+                    matched.append(target_name)
+                else:
+                    gaps.append(target_name)
+        return matched, gaps
+
+    matched_explicit, explicit_gap_names = match_by_cosine(jd_explicit, explicit_cosine_mat)
+    matched_implicit, implicit_gap_names = match_by_cosine(jd_implicit, implicit_cosine_mat)
+
+    # 6. Build per-target cosine similarity scores. Scores remain the actual
+    # normalized-vector cosine values and are not overwritten for exact names.
     sim_scores: List[SimilarityScore] = []
-    if sim_mat.size > 0 and cand_skills and jd_explicit:
-        for j, jd_skill in enumerate(jd_explicit):
-            if j < sim_mat.shape[1]:
-                best_i = int(np.argmax(sim_mat[:, j]))
-                score = float(sim_mat[best_i, j])
-                sim_scores.append(SimilarityScore(
-                    candidate_skill=cand_skills[best_i] if best_i < len(cand_skills) else "",
-                    jd_skill=jd_skill,
-                    score=round(score, 4),
-                    model=model_name,
-                ))
+    for j, jd_skill in enumerate(jd_explicit):
+        if j < explicit_cosine_mat.shape[1]:
+            best_i = int(np.argmax(explicit_cosine_mat[:, j]))
+            score = float(explicit_cosine_mat[best_i, j])
+            sim_scores.append(SimilarityScore(
+                candidate_skill=cand_skills[best_i] if best_i < len(cand_skills) else "",
+                jd_skill=jd_skill,
+                score=round(score, 4),
+                model=model_name,
+            ))
+
+    # 7. Cosine coverage and overall similarity use the same real score matrix.
+    cosine_mat = np.zeros((len(cand_skills), len(jd_explicit)))
+
+    if cand_skills and jd_explicit:
+        try:
+            candidate_embeddings = model.encode(cand_skills)
+            jd_embeddings = model.encode(jd_explicit)
+            candidate_embeddings = np.asarray(candidate_embeddings, dtype=np.float32)
+            jd_embeddings = np.asarray(jd_embeddings, dtype=np.float32)
+
+            candidate_norms = np.linalg.norm(candidate_embeddings, axis=1, keepdims=True)
+            jd_norms = np.linalg.norm(jd_embeddings, axis=1, keepdims=True)
+            candidate_embeddings = candidate_embeddings / np.clip(candidate_norms, 1e-9, None)
+            jd_embeddings = jd_embeddings / np.clip(jd_norms, 1e-9, None)
+            cosine_mat = np.clip(candidate_embeddings @ jd_embeddings.T, -1.0, 1.0)
+        except Exception:
+            cosine_mat = np.zeros((len(cand_skills), len(jd_explicit)))
+
+    for j, jd_skill in enumerate(jd_explicit):
+        if cosine_mat.shape[1] > j:
+            best_i = int(np.argmax(cosine_mat[:, j]))
+            score = float(cosine_mat[best_i, j])
+
+            canonical_jd = esco_engine.canonicalize(jd_skill) or jd_skill
+            canonical_candidate = esco_engine.canonicalize(cand_skills[best_i]) or cand_skills[best_i]
+            # Keep the cosine result exactly as returned by the selected encoder.
+            # Do not replace exact canonical-name matches with 1.0.
+            score = float(cosine_mat[best_i, j])
+
+            sim_scores.append(SimilarityScore(
+                candidate_skill=cand_skills[best_i] if best_i < len(cand_skills) else "",
+                jd_skill=jd_skill,
+                score=round(max(0.0, score), 4),
+                model=model_name,
+            ))
 
     # 8. Compute coverage
     total_reqs = len(jd_explicit) + len(jd_implicit)

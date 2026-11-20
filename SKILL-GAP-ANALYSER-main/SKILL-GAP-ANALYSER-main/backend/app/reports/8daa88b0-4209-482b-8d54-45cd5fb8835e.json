@@ -1,0 +1,160 @@
+{
+  "report_id": "8daa88b0-4209-482b-8d54-45cd5fb8835e",
+  "timestamp": "2026-11-20T23:34:45.065888",
+  "model_used": "Proposed Hybrid",
+  "candidate_skills": [
+    "RESTful API Design",
+    "JavaScript",
+    "AWS",
+    "CI/CD",
+    "React",
+    "Git Version Control",
+    "SQL",
+    "Node.js",
+    "HTML5/CSS3",
+    "MongoDB"
+  ],
+  "jd_explicit_skills": [
+    "RESTful API Design",
+    "JavaScript",
+    "React",
+    "Docker",
+    "CI/CD",
+    "SQL",
+    "Git Version Control"
+  ],
+  "matched_skills": [],
+  "explicit_gaps": [
+    "RESTful API Design",
+    "JavaScript",
+    "React",
+    "Docker",
+    "CI/CD",
+    "SQL",
+    "Git Version Control"
+  ],
+  "implicit_gaps": [
+    "Algorithmic Thinking",
+    "Automated Testing",
+    "DevOps Principles",
+    "HTML5/CSS3",
+    "HTTP Protocol Basics",
+    "Linux Administration",
+    "Operating System Basics",
+    "Relational Database Design",
+    "Software Engineering Best Practices",
+    "State Management",
+    "Web Development Basics"
+  ],
+  "skill_coverage_pct": 0.0,
+  "overall_similarity_score": 0.3273,
+  "roadmap": [
+    {
+      "phase": 1,
+      "skill": "Algorithmic Thinking",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in algorithmic thinking.",
+      "triggered_by": [
+        "JavaScript",
+        "React"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Automated Testing",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in automated testing.",
+      "triggered_by": [
+        "CI/CD"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "DevOps Principles",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in devops principles.",
+      "triggered_by": [
+        "CI/CD"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "HTML5/CSS3",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational markup and stylesheet standards structuring and formatting visual presentations on the World Wide Web.",
+      "triggered_by": [
+        "React"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "HTTP Protocol Basics",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in http protocol basics.",
+      "triggered_by": [
+        "RESTful API Design"
+      ]
+    },
+    {
+      "phase": 2,
+      "skill": "RESTful API Design",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Architectural constraints for stateless client-server web services communicating over standard HTTP protocols.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "JavaScript",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Dynamic scripting language for web client-side development and asynchronous runtime environments.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "React",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Component-based JavaScript library for building declarative, interactive user interfaces with virtual DOM.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "Docker",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Platform utilizing OS-level virtualization to deliver software packages in isolated, reproducible lightweight containers.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "CI/CD",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Automated pipeline practices bridging software development, automated testing, artifact creation, and production release.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "SQL",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Domain-specific declarative query language for managing and querying data held in relational database systems.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "Git Version Control",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Distributed version control system tracking source code modifications during collaborative software engineering.",
+      "triggered_by": null
+    }
+  ]
+}
