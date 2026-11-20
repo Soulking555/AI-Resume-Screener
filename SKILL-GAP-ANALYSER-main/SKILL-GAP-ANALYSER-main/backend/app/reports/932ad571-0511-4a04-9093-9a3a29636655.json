@@ -1,0 +1,112 @@
+{
+  "report_id": "932ad571-0511-4a04-9093-9a3a29636655",
+  "timestamp": "2026-11-20T19:32:40.232194",
+  "model_used": "Proposed Hybrid",
+  "candidate_skills": [
+    "Python",
+    "C++",
+    "SQL",
+    "Machine Learning",
+    "Transformers",
+    "RESTful API Design",
+    "MongoDB",
+    "Natural Language Processing"
+  ],
+  "jd_explicit_skills": [
+    "Git Version Control",
+    "Docker",
+    "CI/CD"
+  ],
+  "matched_skills": [],
+  "explicit_gaps": [
+    "Git Version Control",
+    "Docker",
+    "CI/CD"
+  ],
+  "implicit_gaps": [
+    "Automated Testing",
+    "DevOps Principles",
+    "Linux Administration",
+    "Operating System Basics",
+    "Software Engineering Best Practices"
+  ],
+  "skill_coverage_pct": 0.0,
+  "overall_similarity_score": 0.1277,
+  "roadmap": [
+    {
+      "phase": 1,
+      "skill": "Automated Testing",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in automated testing.",
+      "triggered_by": [
+        "CI/CD"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "DevOps Principles",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in devops principles.",
+      "triggered_by": [
+        "CI/CD"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Linux Administration",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Configuring, maintaining, securing, and troubleshooting Unix-like server operating systems and process environments.",
+      "triggered_by": [
+        "Docker"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Operating System Basics",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in operating system basics.",
+      "triggered_by": [
+        "Docker"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Software Engineering Best Practices",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in software engineering best practices.",
+      "triggered_by": [
+        "Git Version Control",
+        "CI/CD"
+      ]
+    },
+    {
+      "phase": 2,
+      "skill": "Git Version Control",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Distributed version control system tracking source code modifications during collaborative software engineering.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "Docker",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Platform utilizing OS-level virtualization to deliver software packages in isolated, reproducible lightweight containers.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "CI/CD",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Automated pipeline practices bridging software development, automated testing, artifact creation, and production release.",
+      "triggered_by": null
+    }
+  ]
+}

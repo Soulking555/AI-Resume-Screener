@@ -1,0 +1,243 @@
+// ─────────────────────────────────────────────
+// PRISMA GENERATOR & DATABASE CONFIG
+// ─────────────────────────────────────────────
+
+generator client {
+  // Tells Prisma to generate the JavaScript client for Node.js
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // We are using PostgreSQL as specified in your project docs
+  provider = "postgresql"
+  // Reads the connection string from the .env file
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// ENUMS (Fixed value lists used across models)
+// ─────────────────────────────────────────────
+
+enum Role {
+  STUDENT   // Can browse courses, enroll, view schedule
+  TEACHER   // Can view assigned courses & student lists
+  ADMIN     // Full control: courses, users, reports, discounts
+}
+
+enum EnrollmentStatus {
+  PENDING    // Student enrolled but not yet confirmed
+  CONFIRMED  // Admin or system confirmed the enrollment
+  CANCELLED  // Enrollment was cancelled
+}
+
+enum DiscountStatus {
+  PENDING   // Sibling discount request waiting for admin review
+  APPROVED  // Admin approved the discount
+  REJECTED  // Admin rejected the discount
+}
+
+// ─────────────────────────────────────────────
+// USER (Base account for all actors)
+// ─────────────────────────────────────────────
+// Every Student, Teacher, and Admin is first a User.
+// This centralizes login credentials and contact info.
+// ─────────────────────────────────────────────
+
+model User {
+  id        Int      @id @default(autoincrement())  // Primary key, auto-increment
+  email     String   @unique                        // Login email, must be unique
+  password  String                                  // Hashed password (never store plain text)
+  firstName String                                  // User's first name
+  lastName  String                                  // User's last name
+  phone     String?                                 // Optional phone number
+  role      Role                                    // STUDENT, TEACHER, or ADMIN
+  createdAt DateTime @default(now())                // Account creation timestamp
+  updatedAt DateTime @updatedAt                     // Auto-updates on every change
+  twoFactorEnabled Boolean  @default(false)  // 2FA
+
+
+  // One-to-one links to role-specific profiles
+  student   Student?    // Only filled if role == STUDENT
+  teacher   Teacher?    // Only filled if role == TEACHER
+  admin     Admin?      // Only filled if role == ADMIN
+
+  // One-to-many: a user can receive many notifications
+  notifications Notification[]
+
+    emailVerified Boolean @default(false)
+}
+
+// ─────────────────────────────────────────────
+// STUDENT (Profile linked to a User)
+// ─────────────────────────────────────────────
+// Stores student-specific data like roll number,
+// date of birth, and family link for sibling discounts.
+// ─────────────────────────────────────────────
+
+model Student {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique                       // Links to User table
+  user        User     @relation(fields: [userId], references: [id])
+  rollNumber  String   @unique                       // Institute roll number (e.g., STU001)
+  dateOfBirth DateTime?                              // Optional DOB
+  familyId    Int?                                   // Links to Family for sibling discount
+  family      Family?  @relation(fields: [familyId], references: [id])
+
+  // One-to-many: a student can have multiple enrollments
+  enrollments Enrollment[]
+  // One-to-many: a student can have multiple payment records
+  payments    Payment[]
+  siblingDiscounts  DiscountRequest[] @relation("SiblingStudent")
+  
+}
+
+// ─────────────────────────────────────────────
+// FAMILY (Guardian / household info)
+// ─────────────────────────────────────────────
+// Used for the sibling discount feature.
+// Multiple students can belong to the same family.
+// ─────────────────────────────────────────────
+
+model Family {
+  id           Int       @id @default(autoincrement())
+  guardianName String                                 // Parent/guardian name
+  address      String?                                 // Optional home address
+  phone        String?                                 // Optional contact number
+
+  // One-to-many: multiple students can belong to one family
+  students     Student[]
+  // One-to-many: discount requests tied to this family
+  discountRequests DiscountRequest[]
+}
+
+// ─────────────────────────────────────────────
+// TEACHER (Profile linked to a User)
+// ─────────────────────────────────────────────
+// Stores teacher-specific data like employee ID,
+// department, and availability schedule.
+// ─────────────────────────────────────────────
+
+model Teacher {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique                       // Links to User table
+  user         User     @relation(fields: [userId], references: [id])
+  employeeId   String   @unique                       // Institute employee ID (e.g., EMP001)
+  department   String?                                // Subject department (e.g., Mathematics)
+  availability String?                                // JSON or text of available time slots
+
+  // One-to-many: a teacher can be assigned to multiple courses
+  courses      Course[]
+}
+
+// ─────────────────────────────────────────────
+// ADMIN (Profile linked to a User)
+// ─────────────────────────────────────────────
+// Minimal profile — admins mainly use the User record.
+// This model exists to enforce the one-to-one relation.
+// ─────────────────────────────────────────────
+
+model Admin {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+}
+
+// ─────────────────────────────────────────────
+// COURSE (Tutorial classes offered by the institute)
+// ─────────────────────────────────────────────
+// Stores course details, schedule, fees, capacity,
+// and which teacher is assigned.
+// ─────────────────────────────────────────────
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  name        String                                  // Course name (e.g., "Advanced Algebra")
+  description String?                                 // Optional description
+  schedule    String                                  // When the class runs (e.g., "Mon/Wed 4PM")
+  fees        Decimal  @db.Decimal(10, 2)             // Course fee with 2 decimal places
+  capacity    Int                                     // Max number of students allowed
+  teacherId   Int?                                    // Assigned teacher (optional)
+  teacher     Teacher? @relation(fields: [teacherId], references: [id])
+  createdAt   DateTime @default(now())                // When the course was created
+
+  // One-to-many: students enroll in this course
+  enrollments Enrollment[]
+}
+
+// ─────────────────────────────────────────────
+// ENROLLMENT (Links a Student to a Course)
+// ─────────────────────────────────────────────
+// Junction table that records when a student
+// enrolled and the current status of that enrollment.
+// ─────────────────────────────────────────────
+
+model Enrollment {
+  id         Int              @id @default(autoincrement())
+  studentId  Int
+  student    Student          @relation(fields: [studentId], references: [id])
+  courseId   Int
+  course     Course           @relation(fields: [courseId], references: [id])
+  status     EnrollmentStatus @default(PENDING)       // Starts as PENDING until confirmed
+  enrolledAt DateTime         @default(now())        // Timestamp of enrollment
+}
+
+// ─────────────────────────────────────────────
+// PAYMENT (Fee records for enrollments)
+// ─────────────────────────────────────────────
+// Tracks how much a student paid and whether
+// the payment is pending, completed, or failed.
+// ─────────────────────────────────────────────
+
+model Payment {
+  id        Int     @id @default(autoincrement())
+  studentId Int
+  student   Student @relation(fields: [studentId], references: [id])
+  amount    Decimal @db.Decimal(10, 2)               // Payment amount
+  status    String  @default("PENDING")              // PENDING, COMPLETED, FAILED, etc.
+  paidAt    DateTime?                                 // Timestamp when payment was made
+}
+
+// ─────────────────────────────────────────────
+// NOTIFICATION (System alerts sent to users)
+// ─────────────────────────────────────────────
+// Stores messages like enrollment confirmations,
+// schedule changes, and announcements.
+// ─────────────────────────────────────────────
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  title     String                                  // Short notification title
+  message   String                                  // Full message body
+  isRead    Boolean  @default(false)                // True when user has seen it
+  createdAt DateTime @default(now())                // When the notification was sent
+}
+
+// ─────────────────────────────────────────────
+// DISCOUNT REQUEST (Sibling discount workflow)
+// ─────────────────────────────────────────────
+// When a family claims a sibling discount, this
+// record is created for admin review and approval.
+// ─────────────────────────────────────────────
+
+model DiscountRequest {
+  id          Int            @id @default(autoincrement())
+  familyId    Int
+  family      Family         @relation(fields: [familyId], references: [id])
+  siblingStudentId Int?                                           
+  siblingStudent   Student?       @relation("SiblingStudent", fields: [siblingStudentId], references: [id]) 
+  status      DiscountStatus @default(PENDING)      // Waiting for admin action
+  requestedAt DateTime       @default(now())         // When the request was submitted
+  reviewedAt  DateTime?                              // When admin approved/rejected it
+}
+
+model OtpToken {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  purpose   String   // EMAIL_VERIFY, LOGIN_2FA, PASSWORD_RESET
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
