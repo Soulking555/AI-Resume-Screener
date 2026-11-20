@@ -115,13 +115,7 @@ async def analyze_resume(
     jd_explicit_raw = skill_extractor.extract_jd_skills(jd_text)
     jd_explicit = [s for s in jd_explicit_raw if s]  # filter None
 
-    # 4. Implicit prerequisite detection
-    jd_implicit_all = esco_engine.get_implicit_prerequisites(jd_explicit)
-    jd_implicit = [s for s in jd_implicit_all if s not in jd_explicit]
-
-    # 5. Compute one normalized-vector cosine matrix for the selected model.
-    # Matching, gap classification, per-skill scores, and coverage all use
-    # these real cosine values; no exact-name or lexical score is substituted.
+    # 4. Compute normalized candidate-to-target cosine similarities.
     def encode_cosine_matrix(candidate_names, target_names):
         if not candidate_names or not target_names:
             return np.zeros((len(candidate_names), len(target_names)))
@@ -137,27 +131,60 @@ async def analyze_resume(
             return np.zeros((len(candidate_names), len(target_names)))
 
     explicit_cosine_mat = encode_cosine_matrix(cand_skills, jd_explicit)
-    implicit_cosine_mat = encode_cosine_matrix(cand_skills, jd_implicit) if jd_implicit else np.zeros((len(cand_skills), 0))
 
     def match_by_cosine(target_names, cosine_matrix):
         matched = []
         gaps = []
+        matched_scores = []
         if cosine_matrix.size == 0:
-            return matched, list(target_names)
+            return matched, list(target_names), matched_scores
         for j, target_name in enumerate(target_names):
             if j < cosine_matrix.shape[1]:
-                best_score = float(np.max(cosine_matrix[:, j]))
+                best_i = int(np.argmax(cosine_matrix[:, j]))
+                best_score = float(cosine_matrix[best_i, j])
                 if best_score >= threshold:
                     matched.append(target_name)
+                    matched_scores.append(best_score)
                 else:
                     gaps.append(target_name)
-        return matched, gaps
+        return matched, gaps, matched_scores
 
-    matched_explicit, explicit_gap_names = match_by_cosine(jd_explicit, explicit_cosine_mat)
-    matched_implicit, implicit_gap_names = match_by_cosine(jd_implicit, implicit_cosine_mat)
+    matched_explicit, explicit_gap_names, matched_explicit_scores = match_by_cosine(
+        jd_explicit, explicit_cosine_mat
+    )
 
-    # 6. Build per-target cosine similarity scores. Scores remain the actual
-    # normalized-vector cosine values and are not overwritten for exact names.
+    # 5. Direct prerequisites are derived only for missing explicit skills.
+    # This avoids the large, recursively-expanded prerequisite list.
+    candidate_canonical_names = {
+        (esco_engine.canonicalize(skill) or skill).lower()
+        for skill in cand_skills
+    }
+
+    direct_prerequisites = []
+    seen_prerequisites = set()
+    for missing_skill in explicit_gap_names:
+        skill_obj = esco_engine.get_skill(missing_skill)
+        if not skill_obj:
+            continue
+        for prerequisite in skill_obj.implicit_prerequisites:
+            prerequisite_key = prerequisite.lower()
+            if prerequisite_key in seen_prerequisites:
+                continue
+            if prerequisite_key in candidate_canonical_names:
+                continue
+            seen_prerequisites.add(prerequisite_key)
+            direct_prerequisites.append(prerequisite)
+
+    # Keep the roadmap focused rather than flooding the UI with latent concepts.
+    direct_prerequisites = direct_prerequisites[:8]
+    jd_implicit = direct_prerequisites
+
+    implicit_cosine_mat = encode_cosine_matrix(cand_skills, jd_implicit)
+    matched_implicit, implicit_gap_names, _ = match_by_cosine(
+        jd_implicit, implicit_cosine_mat
+    )
+
+    # 6. Emit the best actual cosine score for every explicit target skill.
     sim_scores: List[SimilarityScore] = []
     for j, jd_skill in enumerate(jd_explicit):
         if j < explicit_cosine_mat.shape[1]:
@@ -170,64 +197,31 @@ async def analyze_resume(
                 model=model_name,
             ))
 
-    # 7. Cosine coverage and overall similarity use the same real score matrix.
-    cosine_mat = np.zeros((len(cand_skills), len(jd_explicit)))
+    # 7. Coverage is the percentage of explicit target requirements cosine-matched.
+    coverage_pct = round(
+        len(matched_explicit) / max(len(jd_explicit), 1) * 100,
+        1
+    )
 
-    if cand_skills and jd_explicit:
-        try:
-            candidate_embeddings = model.encode(cand_skills)
-            jd_embeddings = model.encode(jd_explicit)
-            candidate_embeddings = np.asarray(candidate_embeddings, dtype=np.float32)
-            jd_embeddings = np.asarray(jd_embeddings, dtype=np.float32)
-
-            candidate_norms = np.linalg.norm(candidate_embeddings, axis=1, keepdims=True)
-            jd_norms = np.linalg.norm(jd_embeddings, axis=1, keepdims=True)
-            candidate_embeddings = candidate_embeddings / np.clip(candidate_norms, 1e-9, None)
-            jd_embeddings = jd_embeddings / np.clip(jd_norms, 1e-9, None)
-            cosine_mat = np.clip(candidate_embeddings @ jd_embeddings.T, -1.0, 1.0)
-        except Exception:
-            cosine_mat = np.zeros((len(cand_skills), len(jd_explicit)))
-
-    for j, jd_skill in enumerate(jd_explicit):
-        if cosine_mat.shape[1] > j:
-            best_i = int(np.argmax(cosine_mat[:, j]))
-            score = float(cosine_mat[best_i, j])
-
-            canonical_jd = esco_engine.canonicalize(jd_skill) or jd_skill
-            canonical_candidate = esco_engine.canonicalize(cand_skills[best_i]) or cand_skills[best_i]
-            # Keep the cosine result exactly as returned by the selected encoder.
-            # Do not replace exact canonical-name matches with 1.0.
-            score = float(cosine_mat[best_i, j])
-
-            sim_scores.append(SimilarityScore(
-                candidate_skill=cand_skills[best_i] if best_i < len(cand_skills) else "",
-                jd_skill=jd_skill,
-                score=round(max(0.0, score), 4),
-                model=model_name,
-            ))
-
-    # 8. Compute coverage
-    total_reqs = len(jd_explicit) + len(jd_implicit)
-    matched_total = len(matched_explicit) + len(matched_implicit)
-    coverage_pct = round(matched_total / max(total_reqs, 1) * 100, 1)
-
-    # 9. Overall similarity (mean of best scores per JD skill)
-    if sim_scores:
-        overall_sim = round(float(np.mean([s.score for s in sim_scores])), 4)
+    # 8. Cosine mean is calculated only across successfully matched explicit skills.
+    # This keeps it consistent with coverage and avoids lowering it by unrelated gaps.
+    if matched_explicit_scores:
+        overall_sim = round(float(np.mean(matched_explicit_scores)), 4)
     else:
         overall_sim = 0.0
 
-    # 10. Build gap details
+    # 9. Build gap details
     explicit_gap_details = [
         _build_gap_detail(s, jd_explicit) for s in explicit_gap_names
     ]
     implicit_gap_details = []
     for s in implicit_gap_names:
-        triggers = [req for req in jd_explicit
-                    if s in esco_engine.get_implicit_prerequisites([req])]
+        triggers = [req for req in explicit_gap_names
+                    if esco_engine.get_skill(req)
+                    and s in esco_engine.get_skill(req).implicit_prerequisites]
         implicit_gap_details.append(_build_gap_detail(s, jd_explicit, triggered_by=triggers[:3]))
 
-    # 11. All model benchmark metrics
+    # 10. All model benchmark metrics
     all_metrics = model_registry.get_benchmark_metrics()
     metrics_out = [
         ModelMetrics(
@@ -244,10 +238,10 @@ async def analyze_resume(
         for m in all_metrics
     ]
 
-    # 12. Upskilling roadmap
+    # 11. Upskilling roadmap
     roadmap = _build_roadmap(explicit_gap_names, implicit_gap_names, jd_explicit)
 
-    # 13. Save report data
+    # 12. Save report data
     report_id = str(uuid.uuid4())
     report_data = {
         "report_id": report_id,
@@ -266,7 +260,7 @@ async def analyze_resume(
     with open(report_path, "w") as f:
         json.dump(report_data, f, indent=2)
 
-    # 14. Build output
+    # 13. Build output
     return AnalysisResult(
         resume_text_preview=resume_text[:500],
         jd_text_preview=jd_text[:500],

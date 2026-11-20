@@ -1,0 +1,154 @@
+{
+  "report_id": "21ee8688-7122-49ce-98bb-b2651ef672e8",
+  "timestamp": "2026-11-21T01:05:14.425454",
+  "model_used": "Proposed Hybrid",
+  "candidate_skills": [
+    "RESTful API Design",
+    "CI/CD",
+    "Machine Learning",
+    "Python",
+    "JavaScript",
+    "Bash/Shell",
+    "Node.js",
+    "FastAPI",
+    "Django",
+    "Docker",
+    "AWS",
+    "Linux Administration",
+    "PostgreSQL",
+    "Redis",
+    "SQL",
+    "Git Version Control",
+    "Microservices Architecture"
+  ],
+  "jd_explicit_skills": [
+    "Machine Learning",
+    "Deep Learning",
+    "Git Version Control",
+    "Python",
+    "Kubernetes",
+    "Docker",
+    "AWS",
+    "Terraform",
+    "Linux Administration",
+    "PostgreSQL",
+    "PyTorch",
+    "Natural Language Processing",
+    "MLflow"
+  ],
+  "matched_skills": [
+    "Machine Learning",
+    "Deep Learning",
+    "Git Version Control",
+    "Python",
+    "Kubernetes",
+    "Docker",
+    "AWS",
+    "Linux Administration",
+    "PostgreSQL"
+  ],
+  "explicit_gaps": [
+    "Terraform",
+    "PyTorch",
+    "Natural Language Processing",
+    "MLflow"
+  ],
+  "implicit_gaps": [
+    "Cloud Computing Concepts",
+    "DevOps Principles",
+    "Infrastructure as Code",
+    "Linear Algebra",
+    "Linguistics Basics"
+  ],
+  "skill_coverage_pct": 69.2,
+  "overall_similarity_score": 0.9287,
+  "roadmap": [
+    {
+      "phase": 1,
+      "skill": "Cloud Computing Concepts",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in cloud computing concepts.",
+      "triggered_by": [
+        "AWS",
+        "Terraform"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "DevOps Principles",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in devops principles.",
+      "triggered_by": [
+        "Kubernetes",
+        "Terraform",
+        "MLflow"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Infrastructure as Code",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in infrastructure as code.",
+      "triggered_by": [
+        "Terraform"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Linear Algebra",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in linear algebra.",
+      "triggered_by": [
+        "Machine Learning",
+        "Deep Learning",
+        "PyTorch"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Linguistics Basics",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in linguistics basics.",
+      "triggered_by": [
+        "Natural Language Processing"
+      ]
+    },
+    {
+      "phase": 2,
+      "skill": "Terraform",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Infrastructure as Code tool for building, changing, and versioning cloud and on-premises infrastructure safely.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "PyTorch",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Open-source machine learning library based on Torch for tensor computation and deep neural networks with dynamic autograd.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "Natural Language Processing",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Computational techniques enabling algorithms to parse, understand, interpret, and generate human languages.",
+      "triggered_by": null
+    },
+    {
+      "phase": 2,
+      "skill": "MLflow",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Open-source platform managing end-to-end machine learning lifecycle including tracking, model packaging, and registry.",
+      "triggered_by": null
+    }
+  ]
+}
