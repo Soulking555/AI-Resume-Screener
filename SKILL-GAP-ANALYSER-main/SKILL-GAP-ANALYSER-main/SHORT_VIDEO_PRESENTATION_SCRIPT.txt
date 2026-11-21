@@ -1,0 +1,59 @@
+AI RESUME SKILL GAP ANALYZER — 1–2 MINUTE VIDEO SCRIPT
+======================================================
+
+ESTIMATED DURATION: 1 minute 30 seconds
+
+[0:00–0:15] Introduction
+
+“This project is the AI Resume Skill Gap Analyzer, a full-stack application that compares a candidate’s resume with an information-technology job description.”
+
+Show the landing page or the analysis page.
+
+[0:15–0:35] Main Features
+
+“The system allows users to upload or paste a resume and a job description. It uses an ESCO-style skill taxonomy to recognize common names and aliases, such as k8s for Kubernetes and postgres for PostgreSQL.”
+
+Show the two input panels and load the sample resume and job description.
+
+[0:35–0:55] AI Analysis
+
+“The backend extracts skills and generates semantic embeddings using transformer models. It normalizes the vectors and calculates cosine similarity to match resume skills with target job requirements.”
+
+“Users can select the Proposed Hybrid model or one of five other available NLP models.”
+
+Show the model selector, then start the analysis.
+
+[0:55–1:15] Results
+
+“The application displays target skill coverage, matched skills, mean cosine similarity, explicit skill gaps, and direct prerequisite gaps.”
+
+Point to each result card and briefly scroll through the Matched Skills and Explicit Gaps sections.
+
+[1:15–1:35] Roadmap and Reports
+
+“It also creates a two-phase upskilling roadmap: foundational implicit prerequisites first, followed by missing explicit skills.”
+
+“The dashboard provides charts and model benchmarks, while CSV and PDF buttons allow users to download the complete report.”
+
+Show the roadmap, dashboard, and download buttons.
+
+[1:35–1:45] Conclusion
+
+“In summary, this project combines React, Vite, FastAPI, PyPDF, transformer-based semantic matching, cosine similarity, an ESCO-style taxonomy, dashboards, and report generation to help candidates understand and improve their skill profile.”
+
+“Thank you for watching.”
+
+QUICK SCREEN DEMONSTRATION
+--------------------------
+1. Show the landing page.
+2. Open the Analyze page.
+3. Load the sample resume.
+4. Load the sample job description.
+5. Select Proposed Hybrid.
+6. Run the analysis.
+7. Highlight Target Skill Coverage.
+8. Highlight Mean Cosine Similarity.
+9. Show matched and missing skills.
+10. Scroll through the roadmap.
+11. Open the dashboard or download a report.
+12. Finish with the application landing page.

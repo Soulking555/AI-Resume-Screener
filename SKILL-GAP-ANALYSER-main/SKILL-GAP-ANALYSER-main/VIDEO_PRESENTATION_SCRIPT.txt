@@ -1,0 +1,147 @@
+AI RESUME SKILL GAP ANALYZER — VIDEO PRESENTATION SCRIPT
+==========================================================
+
+TOTAL ESTIMATED DURATION: 6–8 minutes
+
+OPENING — 0:00 to 0:30
+----------------------
+"Hello, and welcome to the demonstration of the AI Resume Skill Gap Analyzer. This full-stack application compares a candidate's resume with an information-technology job description to identify matched skills, missing requirements, prerequisite gaps, and suitable learning steps."
+
+PROJECT INTRODUCTION — 0:30 to 1:15
+-----------------------------------
+"The application uses a React and Vite frontend, a FastAPI backend, transformer-based semantic models, an ESCO-style ICT skill taxonomy, and PDF processing. It provides a complete workflow from resume upload to downloadable analysis reports."
+
+Show:
+- the landing page;
+- navigation to the analysis page;
+- the layout of the resume and job-description panels.
+
+PROBLEM STATEMENT — 1:15 to 1:50
+--------------------------------
+"Candidates often struggle to identify exactly which skills they need for a target job. Traditional keyword comparison only recognizes exact words. It can miss equivalent terms or fail to distinguish related skills."
+
+"This project combines alias recognition, semantic embeddings, cosine similarity, and prerequisite mapping to provide a more meaningful and explainable skill-gap analysis."
+
+SYSTEM ARCHITECTURE — 1:50 to 2:35
+---------------------------------
+"The frontend sends resume and job-description information to the FastAPI backend. The backend extracts text, recognizes canonical skills, generates vector embeddings, calculates cosine similarity, identifies gaps, and builds the learning roadmap."
+
+Show:
+- the two input cards;
+- model selector;
+- the run analysis button.
+
+If useful, briefly explain:
+- React for interface components;
+- Vite for the development server;
+- FastAPI and Uvicorn for the API;
+- PyPDF for PDFs;
+- Transformers and Sentence Transformers for embeddings;
+- NumPy for vector calculations.
+
+DOCUMENT INPUT DEMONSTRATION — 2:35 to 3:25
+-------------------------------------------
+"Here, I will first show the sample resume and sample job description. They can be loaded with one click, or the user can upload a PDF or paste text directly."
+
+Demonstrate:
+1. Load the sample resume.
+2. Load the sample job description.
+3. Explain that PDF uploads are also supported.
+4. Select the Proposed Hybrid model.
+5. Start the analysis.
+
+Explain:
+"The backend validates both inputs before processing. PDF text is extracted with PyPDF."
+
+SKILL EXTRACTION DEMONSTRATION — 3:25 to 4:15
+---------------------------------------------
+"FastAPI passes the documents to the skill extractor. The extractor uses aliases and canonical labels. For example, k8s becomes Kubernetes, postgres becomes PostgreSQL, and py becomes Python."
+
+"It also detects resume sections such as Summary, Skills, Experience, Education, and Projects. This helps identify where a skill appears and preserves resume context."
+
+"The extracted job-description skills become the explicit requirements for target coverage."
+
+MODEL AND COSINE EXPLANATION — 4:15 to 5:05
+------------------------------------------
+"The system compares candidate skill embeddings with job-description skill embeddings. It normalizes both sets of vectors and calculates cosine similarity."
+
+Quote the formula:
+"Cosine equals the dot product of two vectors divided by the product of their magnitudes."
+
+"The maximum cosine score for each target requirement is compared with the calibrated model threshold. This produces matched skills and explicit gaps without artificially setting exact matches to one."
+
+Explain matching models:
+"Users may choose the Proposed Hybrid model or a single baseline model such as MPNet, Sentence-BERT, BERT, RoBERTa, or DistilBERT."
+
+TARGET COVERAGE AND MEAN COSINE — 5:05 to 5:45
+----------------------------------------------
+"Target skill coverage represents the percentage of explicit job-description requirements matched by the candidate. It is calculated by dividing matched explicit requirements by all explicit requirements."
+
+"Mean cosine similarity is calculated from the true cosine scores of successfully matched explicit requirements. This keeps coverage and similarity logically consistent."
+
+Point out:
+- the Target Skill Coverage ring;
+- the Mean Cosine Similarity card;
+- the Matched Skills card;
+- Explicit Gaps;
+- Implicit Gaps.
+
+IMPLICIT GAP DEMONSTRATION — 5:45 to 6:20
+----------------------------------------
+"When an explicit requirement is missing, the application checks the direct prerequisites associated with that skill. For example, a missing advanced technology may require a more basic concept as a foundation."
+
+"The system removes prerequisites already possessed by the candidate and limits duplicates. It also shows only direct prerequisites rather than expanding into a very large dependency tree."
+
+"This produces a focused implicit skill list instead of overwhelming the user with unrelated concepts."
+
+ROADMAP DEMONSTRATION — 6:20 to 6:55
+-----------------------------------
+"The roadmap is divided into two phases. Phase one includes direct foundational prerequisites. Phase two includes the missing explicit technologies."
+
+"Every roadmap step contains an estimated duration, a description, and the requirement that triggered it."
+
+DASHBOARD DEMONSTRATION — 6:55 to 7:30
+--------------------------------------
+"The dashboard displays model benchmarking and skill inventory. It includes model comparison charts, radar charts, similarity distribution, matched and missing skill tables, and detailed skill categories."
+
+"The user can search and filter matched skills, explicit gaps, and implicit gaps."
+
+REPORT DOWNLOAD DEMONSTRATION — 7:30 to 7:55
+-------------------------------------------
+"The application saves the analysis as a JSON report. The user can download a CSV or generate a professional PDF report with ReportLab."
+
+Demonstrate:
+- Download CSV;
+- Download PDF;
+- open the API documentation if time permits.
+
+CONCLUSION — 7:55 to 8:25
+-------------------------
+"In summary, this project combines resume parsing, ESCO-style skill taxonomy, semantic embeddings, cosine similarity, prerequisite analysis, reporting, and interactive visualization."
+
+"It helps candidates understand exactly which job requirements are matched and which areas should be prioritized in their learning plan."
+
+"Thank you for watching the AI Resume Skill Gap Analyzer demonstration."
+
+SHORTER ALTERNATIVE OPENING — 15 seconds
+----------------------------------------
+"This is the AI Resume Skill Gap Analyzer. It compares resumes and IT job descriptions using semantic AI, ESCO skill mapping, cosine similarity, and prerequisite analysis to generate matched skills, skill gaps, and a personalized learning roadmap."
+
+SHORTER ALTERNATIVE CLOSING — 15 seconds
+----------------------------------------
+"The system extracts and normalizes skills, measures semantic cosine alignment, calculates target coverage, identifies direct prerequisite gaps, and creates downloadable CSV and PDF reports. This makes the candidate's next career-development steps clear and measurable."
+
+SCREEN RECORDING SUGGESTIONS
+----------------------------
+1. Start with the landing page.
+2. Navigate to the Analyze page.
+3. Load both sample documents.
+4. Select Proposed Hybrid.
+5. Start the analysis and wait for the result.
+6. Highlight Target Skill Coverage.
+7. Highlight Mean Cosine Similarity.
+8. Scroll through Matched Skills and Explicit Gaps.
+9. Scroll through Implicit Gaps and the roadmap.
+10. Open the dashboard.
+11. Download CSV and PDF reports.
+12. End on the dashboard or landing page.

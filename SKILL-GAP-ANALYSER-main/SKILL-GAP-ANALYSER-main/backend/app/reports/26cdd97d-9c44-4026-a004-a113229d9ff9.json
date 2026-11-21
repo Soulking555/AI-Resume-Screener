@@ -1,0 +1,87 @@
+{
+  "report_id": "26cdd97d-9c44-4026-a004-a113229d9ff9",
+  "timestamp": "2026-11-21T11:04:38.849190",
+  "model_used": "Proposed Hybrid",
+  "candidate_skills": [
+    "RESTful API Design",
+    "Python",
+    "JavaScript",
+    "React",
+    "Node.js",
+    "HTML5/CSS3",
+    "AWS",
+    "MongoDB",
+    "SQL",
+    "Git Version Control"
+  ],
+  "jd_explicit_skills": [
+    "RESTful API Design",
+    "Python",
+    "JavaScript",
+    "Java",
+    "React",
+    "Node.js",
+    "HTML5/CSS3",
+    "Docker",
+    "AWS",
+    "PostgreSQL",
+    "MongoDB",
+    "SQL",
+    "Git Version Control"
+  ],
+  "matched_skills": [
+    "RESTful API Design",
+    "Python",
+    "JavaScript",
+    "Java",
+    "React",
+    "Node.js",
+    "HTML5/CSS3",
+    "AWS",
+    "PostgreSQL",
+    "MongoDB",
+    "SQL",
+    "Git Version Control"
+  ],
+  "explicit_gaps": [
+    "Docker"
+  ],
+  "implicit_gaps": [
+    "Linux Administration",
+    "Operating System Basics"
+  ],
+  "skill_coverage_pct": 92.3,
+  "overall_similarity_score": 0.9389,
+  "roadmap": [
+    {
+      "phase": 1,
+      "skill": "Linux Administration",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Configuring, maintaining, securing, and troubleshooting Unix-like server operating systems and process environments.",
+      "triggered_by": [
+        "Docker",
+        "AWS"
+      ]
+    },
+    {
+      "phase": 1,
+      "skill": "Operating System Basics",
+      "skill_type": "implicit",
+      "estimated_weeks": "2\u20133 weeks",
+      "description": "Foundational competency in operating system basics.",
+      "triggered_by": [
+        "Docker",
+        "AWS"
+      ]
+    },
+    {
+      "phase": 2,
+      "skill": "Docker",
+      "skill_type": "explicit",
+      "estimated_weeks": "3\u20134 weeks",
+      "description": "Platform utilizing OS-level virtualization to deliver software packages in isolated, reproducible lightweight containers.",
+      "triggered_by": null
+    }
+  ]
+}

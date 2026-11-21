@@ -1,0 +1,258 @@
+AI RESUME SKILL GAP ANALYZER — PROJECT WORKFLOW
+================================================
+
+PROJECT PURPOSE
+---------------
+The AI Resume Skill Gap Analyzer compares a candidate resume with an information-technology job description. It identifies skills present in the resume, finds explicit requirements missing from the resume, determines direct prerequisite skill gaps, calculates cosine-semantic similarity, and produces a personalized learning roadmap.
+
+1. APPLICATION STARTUP
+----------------------
+The user starts the FastAPI backend and React/Vite frontend.
+
+Backend startup:
+- FastAPI loads the application lifecycle.
+- The ESCO-based skill taxonomy is initialized.
+- The available NLP models are loaded.
+- Cosine-threshold calibration is completed for each model.
+- CUDA is selected when available; otherwise CPU inference is used.
+
+Frontend startup:
+- Vite serves the React interface at http://localhost:5173.
+- Vite forwards /api requests and /health requests to FastAPI on port 8000.
+
+2. DOCUMENT INPUT
+-----------------
+The user provides:
+- a resume as PDF or pasted text; and
+- a job description as PDF or pasted text.
+
+The frontend validates that:
+- resume text has at least 30 characters;
+- job-description text has at least 20 characters; and
+- both resume and job description are provided.
+
+The user can also choose one of six matching models:
+- Proposed Hybrid
+- MPNet
+- Sentence-BERT
+- BERT
+- RoBERTa
+- DistilBERT
+
+3. BACKEND REQUEST PROCESSING
+-----------------------------
+The frontend sends a multipart POST request to /api/analyze.
+
+FastAPI:
+- validates the selected model;
+- reads uploaded PDF bytes;
+- extracts PDF text using PyPDF;
+- sends pasted text directly to the analysis pipeline;
+- rejects missing, invalid, or too-short inputs.
+
+4. RESUME SECTION PROCESSING
+----------------------------
+Resume text is passed through ResumePDFParser.
+
+The parser identifies:
+- summary sections;
+- technical skills sections;
+- work-experience sections;
+- education sections;
+- projects sections; and
+- a general header section.
+
+Regex-based section detection separates the text into meaningful areas. This allows the skill extractor to record the section from which every recognized skill came.
+
+5. SKILL EXTRACTION
+-------------------
+SkillExtractor searches the resume and job description using a local ESCO-style alias dictionary.
+
+Examples:
+- k8s becomes Kubernetes;
+- postgres or psql becomes PostgreSQL;
+- py or python3 becomes Python;
+- ts becomes TypeScript.
+
+The extractor:
+- normalizes text;
+- performs longest-first multi-token alias matching;
+- captures a surrounding context window for resume mentions;
+- removes duplicate canonical skills;
+- identifies skills in candidate and job-description documents.
+
+6. EXPLICIT SKILL MATCHING
+--------------------------
+For every skill required by the job description:
+- candidate skill embeddings and target skill embeddings are generated;
+- embeddings are normalized as vectors;
+- cosine similarity is computed between the candidate and target vectors;
+- the maximum cosine score for each target requirement is selected;
+- the score is compared with the selected model's calibrated threshold.
+
+A target requirement is matched when its maximum cosine score meets or exceeds the threshold. Otherwise, it is classified as an explicit gap.
+
+Cosine similarity uses this calculation:
+
+cosine(a, b) = (a dot b) / (||a|| × ||b||)
+
+The result ranges approximately from -1 to 1. Scores are commonly interpreted from 0 to 1 for skill matching in this application.
+
+No exact skill name is artificially converted to a score of 1.0. The similarity value is left as the real value produced by the selected encoder and normalized vectors.
+
+7. TARGET SKILL COVERAGE
+------------------------
+Target skill coverage is calculated only from explicit job-description requirements:
+
+Target Skill Coverage = Matched Explicit Requirements / Total Explicit Requirements × 100
+
+This prevents implicit prerequisites from changing the coverage percentage. Implicit prerequisites are learning dependencies; they are not additional target requirements.
+
+8. MEAN COSINE SIMILARITY
+--------------------------
+Mean cosine similarity is calculated from the successfully matched explicit requirements:
+
+Mean Cosine = Average of the best candidate-to-target cosine score for every matched explicit requirement
+
+This metric is consistent with target skill coverage:
+- matched requirements contribute their true cosine scores; and
+- unmatched requirements do not lower the mean of matched requirements.
+
+9. IMPLICIT PREREQUISITE GAP DETECTION
+--------------------------
+The system examines direct prerequisites associated with skills missing from the resume.
+
+For every explicit gap:
+- the ESCO-style skill object is retrieved;
+- direct prerequisite names are collected;
+- prerequisites already possessed by the candidate are removed;
+- duplicate prerequisites are removed; and
+- the output is limited to a focused set for the roadmap.
+
+Only direct prerequisites are shown. This avoids recursively producing dozens of foundational, secondary, and tertiary prerequisites.
+
+Each implicit gap records the missing explicit skill that triggered it.
+
+10. ROADMAP GENERATION
+----------------------
+The application produces a two-phase roadmap.
+
+Phase 1: Direct implicit prerequisites
+- essential foundations needed before or alongside the explicit skill;
+- approximately 2 to 3 weeks per foundation.
+
+Phase 2: Explicit skill gaps
+- technologies directly required by the job description;
+- approximately 3 to 4 weeks per skill.
+
+The roadmap includes:
+- the skill name;
+- its type;
+- the target phase;
+- estimated learning duration;
+- a description; and
+- triggering requirements for implicit gaps.
+
+11. RESULT PERSISTENCE
+----------------------
+The backend creates:
+- a UUID report identifier;
+- a JSON report;
+- candidate skill information;
+- matched explicit skills;
+- explicit gaps;
+- implicit gaps;
+- coverage;
+- cosine scores;
+- model information; and
+- roadmap details.
+
+The JSON report is stored in backend/app/reports.
+
+The React frontend stores the latest analysis in browser sessionStorage. This lets the dashboard display the result while navigating within the tab.
+
+12. FRONTEND RESULT DISPLAY
+---------------------------
+The analysis page presents:
+- target skill coverage;
+- mean cosine similarity;
+- matched skill count;
+- explicit gap count;
+- implicit gap count;
+- matched, explicit, and implicit skill sections;
+- per-skill similarity scores; and
+- the personalized roadmap.
+
+Users can open the dashboard or download reports.
+
+13. REPORT EXPORT
+-----------------
+The report endpoints generate exports:
+
+- GET /api/report/{report_id}/csv creates a CSV file.
+- GET /api/report/{report_id}/pdf creates a PDF file using ReportLab.
+
+The frontend opens these endpoints in a new browser tab or download dialog.
+
+14. MODEL COMPARISON
+--------------------
+The dashboard also contains benchmark results for:
+- Sentence-BERT;
+- BERT;
+- RoBERTa;
+- DistilBERT;
+- MPNet; and
+- Proposed Hybrid.
+
+Benchmark metrics include:
+- accuracy;
+- precision;
+- recall;
+- F1 score;
+- explicit-gap F1;
+- implicit-gap discovery;
+- latency;
+- and calibrated threshold.
+
+15. COMPLETE END-TO-END FLOW
+----------------------------
+Resume or JD Text/PDF
+        |
+        v
+Frontend Validation
+        |
+        v
+FastAPI /api/analyze
+        |
+        v
+PyPDF / Text Input
+        |
+        v
+Resume Section Segmentation
+        |
+        v
+ESCO Alias Normalization
+        |
+        v
+Candidate and JD Skill Extraction
+        |
+        v
+Embedding Generation
+        |
+        v
+Normalized Cosine Matrix
+        |
+        v
+Threshold-Based Matching
+        |
+        v
+Matched, Explicit Gap, and Direct Prerequisite Lists
+        |
+        v
+Coverage and Mean Cosine Calculation
+        |
+        v
+Roadmap and JSON Report
+        |
+        v
+React Dashboard / CSV / PDF Export
